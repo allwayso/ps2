@@ -28,18 +28,74 @@ public class ConcreteEdgesGraphTest extends GraphInstanceTest {
      * Testing ConcreteEdgesGraph...
      */
     
-    // Testing strategy for ConcreteEdgesGraph.toString()
-    //   TODO
+    /* Testing strategy for ConcreteEdgesGraph.toString()
+     * 1.edges size:0,1,more
+     * 2.vertices size:0,1,more
+     * 3.out-degree of a vertex:0,1,more
+     */
     
-    // TODO tests for ConcreteEdgesGraph.toString()
+    //all empty
+    @Test
+    public void testToStringEmptyGraph() {
+        Graph graph=emptyInstance();
+        assertEquals("empty graph",graph.toString());
+    }
     
+    //vertices=more,edges=0,out-degree=0
+    @Test
+    public void testToStringEmptyEdges() {
+        Graph<String> graph=emptyInstance();
+        graph.add("A");
+        graph.add("B");
+        String result=graph.toString();
+        assertTrue("Output should contain vertex A", result.contains("A"));
+        assertTrue("Output should contain vertex B", result.contains("B"));
+        assertTrue("Should indicate no edges for A", result.contains("A -> (no outgoing edges)"));
+        assertTrue("Should indicate no edges for B", result.contains("B -> (no outgoing edges)"));
+    }
     
+    //vertices=more,edges=more,out-degree=1
+    @Test
+    public void testToStringMutualEdges() {
+        Graph<String> graph = emptyInstance();
+        graph.set("A", "B", 1);
+        graph.set("B", "A", 2);
+        
+        String result = graph.toString();
+        
+        assertTrue("A should point to B", result.contains("A ->"));
+        assertTrue("A's target B should have weight 1", result.contains("B(1)"));
+        
+        assertTrue("B should point to A", result.contains("B ->"));
+        assertTrue("B's target A should have weight 2", result.contains("A(2)"));
+    }
+    
+    //vertices=more,edges=more,out-degree=2/0
+    @Test
+    public void testToStringOneToMany() {
+        Graph<String> graph = emptyInstance();
+        graph.set("A", "B", 5);
+        graph.set("A", "C", 8);
+        
+        String result = graph.toString();
+
+        assertTrue("A line should contain B(5)", result.contains("B(5)"));
+        assertTrue("A line should contain C(8)", result.contains("C(8)"));
+
+        assertTrue("B should have no outgoing edges", result.contains("B -> (no outgoing edges)"));
+        assertTrue("C should have no outgoing edges", result.contains("C -> (no outgoing edges)"));
+    }
     
     // Testing strategy for Edge:
     //   - Constructor: valid parameters, invalid parameters (null, weight <= 0)
     //   - Observers: getSource(), getTarget(), getWeight()
     //   - toString(): check format
     //   - Equality: equals() and hashCode() with same/different fields
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testEdgeNullVertex() {
+        new Edge(null, "B", 10);
+    }
     
     @Test
     public void testEdgeObservers() {
