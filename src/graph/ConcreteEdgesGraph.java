@@ -3,11 +3,7 @@
  */
 package graph;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * An implementation of Graph.
@@ -20,9 +16,15 @@ public class ConcreteEdgesGraph implements Graph<String> {
     private final List<Edge> edges = new ArrayList<>();
     
     // Abstraction function:
-    //   TODO
-    // Representation invariant:
-    //   TODO
+    // The edge list(E) and vertices list(L) define a directed graph <E,L>
+    
+    /* Representation invariant:
+     * 1.the weight of Edge should be positive
+     * 2.the source and target points should be included in vertices
+     * 3.no duplicates in edges
+     * 4.no null element in vertices or edges
+     */
+     
     // Safety from rep exposure:
     //   TODO
     
@@ -59,30 +61,103 @@ public class ConcreteEdgesGraph implements Graph<String> {
 }
 
 /**
- * TODO specification
- * Immutable.
- * This class is internal to the rep of ConcreteEdgesGraph.
+ * An immutable representation of a directed, weighted edge in a graph.
  * 
- * <p>PS2 instructions: the specification and implementation of this class is
- * up to you.
+ * * <p>This class represents an edge from a source vertex to a target vertex 
+ * with a specific positive integer weight. Once created, the state of an 
+ * Edge object cannot be modified.
+ * 
+ * * <p>Equality is defined based on the source and target vertices only, 
+ * consistent with the graph's constraint of having at most one directed 
+ * edge between any two specific vertices.
  */
+
 class Edge {
     
-    // TODO fields
+    private final String source;
+    private final String target;
+    private final int weight;
     
     // Abstraction function:
-    //   TODO
-    // Representation invariant:
-    //   TODO
+    // the fields defines an edge in graph that starts from source and ends in target with length of weight
+    
+    /* Representation invariant:
+     * 1.source and target should not be null
+     * 2.the weight should be positive integer
+     */
+     
     // Safety from rep exposure:
-    //   TODO
+    // the fields are all private and final
     
-    // TODO constructor
+    // constructor
+    public Edge(String source,String target,int weight) {
+        if(source==null||target==null) {
+            throw new IllegalArgumentException("Vertices cannot be null");
+        }
+        if(weight<=0) {
+            throw new IllegalArgumentException("Weight should be positive");
+        }
+        
+        this.source=source;
+        this.target=target;
+        this.weight=weight;
+        
+        checkRep();
+    }
     
-    // TODO checkRep
+    // checkRep
     
-    // TODO methods
+    private void checkRep() {
+        assert source!=null:"Source vertex is null";
+        assert target!=null:"Target vertex is null";
+        assert weight>0:"The weight is not positive";
+    }
     
-    // TODO toString()
+    // methods
+    
+    /*
+     * Get the target of edge
+     * @return the target vertex
+     */
+    public String getTarget() {
+        return this.target;
+    }
+    
+    /*
+     * Get the source of edge
+     * @return the source vertex
+     */
+    public String getSource() {
+        return this.source;
+    }
+    
+    /*
+     * Get the weight of edge
+     * @return the weight 
+     */
+    public int getWeight() {
+        return this.weight;
+    }
+    
+    // toString()
+    @Override 
+    public String toString() {
+        return source+"->"+target+" : "+weight;
+    } 
+    
+    //equals
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Edge)) return false;
+        Edge other = (Edge) obj;
+        return this.source.equals(other.source) && 
+               this.target.equals(other.target);
+    }
+    
+    //hashCode
+    @Override
+    public int hashCode() {
+        return Objects.hash(source, target);
+    }
     
 }
