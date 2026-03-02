@@ -37,9 +37,15 @@ public class ConcreteEdgesGraph implements Graph<String> {
      */
     
     
-    // TODO constructor
+    // constructor:only call the checkRep
     
-    // TODO checkRep
+    public ConcreteEdgesGraph() {
+        checkRep();
+    }
+    // checkRep
+    private void checkRep() {
+        
+    }
     
     @Override public boolean add(String vertex) {
         throw new RuntimeException("not implemented");
@@ -65,7 +71,20 @@ public class ConcreteEdgesGraph implements Graph<String> {
         throw new RuntimeException("not implemented");
     }
     
-    // TODO toString()
+    /**
+     * Returns a string representation of this graph, organized by vertex.
+     * * <p>The representation includes each vertex in the graph, followed by its 
+     * outgoing edges. For each vertex, the format is:
+     * <pre>  vertex -> target1(weight1) target2(weight2) ...</pre>
+     * If a vertex has no outgoing edges, it is followed by "(no outgoing edges)".
+     * If the graph is empty, returns a message "empty graph"
+     * * @return a human-readable string describing the vertices and directed edges 
+     * of this graph, grouped by source vertex.
+     */
+    // toString()
+    @Override public String toString() {
+        return null;
+    }
     
 }
 
