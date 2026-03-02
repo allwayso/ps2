@@ -6,10 +6,14 @@ package graph;
 import java.util.*;
 
 /**
- * An implementation of Graph.
+ * An implementation of Graph that uses a list of Edge objects to store 
+ * connections and a set of Strings to store vertices.
  * 
- * <p>PS2 instructions: you MUST use the provided rep.
+ * * <p>This implementation is particularly efficient for sparse graphs 
+ * where the number of edges is relatively small compared to the square 
+ * of the number of vertices.
  */
+
 public class ConcreteEdgesGraph implements Graph<String> {
     
     private final Set<String> vertices = new HashSet<>();
@@ -25,8 +29,13 @@ public class ConcreteEdgesGraph implements Graph<String> {
      * 4.no null element in vertices or edges
      */
      
-    // Safety from rep exposure:
-    //   TODO
+    /* Safety from rep exposure:
+     * vertices and edges fields are private and final.
+     * vertices() returns an unmodifiable view of the vertex set.
+     * Edge is an immutable class, preventing modification of edges after retrieval.
+     * Observers like sources() and targets() return new Map instances.
+     */
+    
     
     // TODO constructor
     
