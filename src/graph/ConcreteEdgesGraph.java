@@ -42,33 +42,144 @@ public class ConcreteEdgesGraph implements Graph<String> {
     public ConcreteEdgesGraph() {
         checkRep();
     }
+    
     // checkRep
     private void checkRep() {
-        
+        // 4. No null element in vertices or edges
+        assert vertices != null : "vertices set is null";
+        assert edges != null : "edges list is null";
+
+        for (String v : vertices) {
+            assert v != null : "null vertex in vertices set";
+        }
+
+        Set<Edge> seenEdges = new HashSet<>();
+        for (Edge e : edges) {
+            assert e != null : "null edge in edges list";
+            
+            // 1. The weight of Edge should be positive (Edge constructor handles this, but we check again)
+            assert e.getWeight() > 0 : "edge weight must be positive";
+
+            // 2. The source and target points should be included in vertices
+            assert vertices.contains(e.getSource()) : "source vertex not in vertices set";
+            assert vertices.contains(e.getTarget()) : "target vertex not in vertices set";
+            
+            // 3. No duplicates in edges (Based on source and target)
+            // Note: Edge.equals() only compares source and target, so this works
+            assert !seenEdges.contains(e) : "duplicate edge detected: " + e;
+            seenEdges.add(e);
+        }
     }
     
     @Override public boolean add(String vertex) {
-        throw new RuntimeException("not implemented");
+     // According to RI: no null elements allowed
+        if (vertex == null) {
+            throw new IllegalArgumentException("Vertex cannot be null");
+        }
+        
+        // HashSet.add returns true if the set did not already contain the element
+        boolean added = vertices.add(vertex);
+        
+        // Verify rep invariant after modification
+        checkRep();
+        
+        return added;
     }
     
-    @Override public int set(String source, String target, int weight) {
-        throw new RuntimeException("not implemented");
+    @Override 
+    public int set(String source, String target, int weight) {
+        // According to the spec, weight must be non-negative
+        if (weight < 0) {
+            throw new IllegalArgumentException("Weight must be non-negative");
+        }
+
+        int previousWeight = 0;
+        Edge edgeToRemove = null;
+
+        // 1. Search for an existing edge between source and target
+        for (Edge e : edges) {
+            if (e.getSource().equals(source) && e.getTarget().equals(target)) {
+                previousWeight = e.getWeight();
+                edgeToRemove = e;
+                break;
+            }
+        }
+
+        if (weight == 0) {
+            // 2. If weight is 0, remove the edge if it exists
+            if (edgeToRemove != null) {
+                edges.remove(edgeToRemove);
+            }
+        } else {
+            // 3. If weight > 0, update or add the edge
+            if (edgeToRemove != null) {
+                edges.remove(edgeToRemove);
+            }
+            // Add vertices if they don't exist
+            vertices.add(source);
+            vertices.add(target);
+            // Add the new edge
+            edges.add(new Edge(source, target, weight));
+        }
+
+        checkRep(); // Maintain rep invariant
+        return previousWeight;
     }
     
-    @Override public boolean remove(String vertex) {
-        throw new RuntimeException("not implemented");
+    @Override 
+    public boolean remove(String vertex) {
+        // 1. Check if the vertex exists
+        if (!vertices.contains(vertex)) {
+            return false;
+        }
+
+        // 2. Remove all edges connected to this vertex
+        // Use an Iterator to safely remove elements while iterating
+        Iterator<Edge> it = edges.iterator();
+        while (it.hasNext()) {
+            Edge e = it.next();
+            if (e.getSource().equals(vertex) || e.getTarget().equals(vertex)) {
+                it.remove();
+            }
+        }
+
+        // 3. Remove the vertex from the set
+        vertices.remove(vertex);
+
+        checkRep(); // Maintain rep invariant
+        return true;
     }
     
     @Override public Set<String> vertices() {
-        throw new RuntimeException("not implemented");
+        // Return an unmodifiable view or a copy to prevent rep exposure.
+        // Using Collections.unmodifiableSet is efficient and safe.
+        return Collections.unmodifiableSet(vertices);
     }
     
     @Override public Map<String, Integer> sources(String target) {
-        throw new RuntimeException("not implemented");
+        Map<String, Integer> sourceMap = new HashMap<>();
+        
+        // Iterate through the edges list to find edges ending at target
+        for (Edge edge : edges) {
+            if (edge.getTarget().equals(target)) {
+                // If multiple edges exist (though RI forbids it), 
+                // the last one found would overwrite in a standard Map.
+                sourceMap.put(edge.getSource(), edge.getWeight());
+            }
+        }
+        return sourceMap;
     }
     
     @Override public Map<String, Integer> targets(String source) {
-        throw new RuntimeException("not implemented");
+        Map<String, Integer> targetMap = new HashMap<>();
+        
+        // Iterate through the edges list to find edges starting from source
+        for (Edge edge : edges) {
+            if (edge.getSource().equals(source)) {
+                targetMap.put(edge.getTarget(), edge.getWeight());
+            }
+        }
+        return targetMap;
     }
     
     /**
@@ -81,9 +192,43 @@ public class ConcreteEdgesGraph implements Graph<String> {
      * * @return a human-readable string describing the vertices and directed edges 
      * of this graph, grouped by source vertex.
      */
-    // toString()
-    @Override public String toString() {
-        return null;
+    
+    @Override 
+    public String toString() {
+        // If the graph is empty, return the message specified in our spec
+        if (vertices.isEmpty()) {
+            return "empty graph";
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("Graph structure:\n");
+        
+        // Sort vertices to ensure a deterministic string output for testing
+        List<String> sortedVertices = new ArrayList<>(vertices);
+        Collections.sort(sortedVertices);
+        
+        for (String v : sortedVertices) {
+            sb.append(v).append(" -> ");
+            List<String> edgeStrings = new ArrayList<>();
+            
+            // Find all edges starting from this vertex
+            for (Edge e : edges) {
+                if (e.getSource().equals(v)) {
+                    // Format: target(weight)
+                    edgeStrings.add(e.getTarget() + "(" + e.getWeight() + ")");
+                }
+            }
+            
+            if (edgeStrings.isEmpty()) {
+                sb.append("(no outgoing edges)");
+            } else {
+                // Join all outgoing edges with spaces
+                sb.append(String.join(" ", edgeStrings));
+            }
+            sb.append("\n");
+        }
+        
+        return sb.toString().trim(); // Trim to remove the last trailing newline
     }
     
 }
