@@ -3,10 +3,7 @@
  */
 package graph;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * An implementation of Graph.
@@ -86,19 +83,27 @@ class Vertex {
      * Create a new vertex with a given label and no outgoing edges.
      * @param label the label for this vertex, must not be null.
      */
-    public Vertex(String label) {  }
-
+    public Vertex(String label) {
+        this.label = label;
+        this.targets = new HashMap<>();
+        checkRep();
+    }
+        
     /**
      * @return the label of this vertex.
      */
-    public String getLabel() {  }
+    public String getLabel() { 
+        return label;
+    }
 
     /**
      * @return a map of outgoing edges from this vertex. 
      * Key is target vertex label, Value is weight.
      * The returned map is a defensive copy.
      */
-    public Map<String, Integer> getTargets() {  }
+    public Map<String, Integer> getTargets() { 
+        return new HashMap<>(targets);
+    }
 
     /**
      * Add, change, or remove an outgoing edge from this vertex.
@@ -106,22 +111,57 @@ class Vertex {
      * @param weight non-negative weight. If 0, removes the edge.
      * @return the previous weight of the edge, or 0 if no such edge existed.
      */
-    public int setTarget(String target, int weight) {  }
+    public int setTarget(String target, int weight) { 
+        int previousWeight = targets.getOrDefault(target, 0);
+        
+        if (weight == 0) {
+            targets.remove(target);
+        } else {
+            targets.put(target, weight);
+        }
+        
+        checkRep(); 
+        return previousWeight;
+    }
 
     /**
      * Remove all outgoing edges from this vertex that point to a specific target.
      * @param target the label of the target vertex to be removed.
      * @return true if an edge was removed, false otherwise.
      */
-    public boolean removeTarget(String target) {  }
+    public boolean removeTarget(String target) {
+        if (targets.containsKey(target)) {
+            targets.remove(target);
+            checkRep();
+            return true;
+        }
+        return false;
+    }
 
     /**
      * @return a human-readable string representation of this vertex and its outgoing edges.
      */
-    @Override public String toString() {  }
+    @Override public String toString() { 
+        StringBuilder sb = new StringBuilder();
+        sb.append("Vertex(").append(label).append(")");
+        if (targets.isEmpty()) {
+            sb.append(" has no outgoing edges.");
+        } else {
+            sb.append(" -> ").append(targets.toString());
+        }
+        return sb.toString();
+    }
 
     /**
      * Check if the representation invariant holds.
      */
-    private void checkRep() {  }
+    private void checkRep() { 
+        assert label != null;
+        assert targets != null;
+        for (String targetLabel : targets.keySet()) {
+            assert targetLabel != null;
+            assert targets.get(targetLabel) != null;
+            assert targets.get(targetLabel) > 0;
+        }
+    }
 }
