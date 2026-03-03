@@ -29,10 +29,53 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
      * Testing ConcreteVerticesGraph...
      */
     
-    // Testing strategy for ConcreteVerticesGraph.toString()
-    //   TODO
-    
-    // TODO tests for ConcreteVerticesGraph.toString()
+    /*
+     * Testing strategy for ConcreteVerticesGraph.toString()
+     * - vertices: 0, 1, n
+     * - edges: 0, 1, n
+     */
+
+    // Partition: empty graph
+    @Test
+    public void testToStringEmptyGraph() {
+        Graph<String> graph = emptyInstance();
+        String result = graph.toString();
+        assertNotNull("expected non-null string", result);
+    }
+
+    // Partition: 1 vertex, 0 edges
+    @Test
+    public void testToStringSingleVertexNoEdges() {
+        Graph<String> graph = emptyInstance();
+        graph.add("A");
+        assertTrue("should contain vertex label", graph.toString().contains("A"));
+    }
+
+    // Partition: multiple vertices and edges
+    @Test
+    public void testToStringMultipleVerticesAndEdges() {
+        Graph<String> graph = emptyInstance();
+        graph.add("A");
+        graph.add("B");
+        graph.set("A", "B", 10);
+        graph.set("B", "A", 20);
+        String result = graph.toString();
+        
+        assertTrue("should contain vertex A", result.contains("A"));
+        assertTrue("should contain vertex B", result.contains("B"));
+        assertTrue("should contain edge weight 10", result.contains("10"));
+        assertTrue("should contain edge weight 20", result.contains("20"));
+    }
+
+    // Partition: self-loop
+    @Test
+    public void testToStringSelfLoop() {
+        Graph<String> graph = emptyInstance();
+        graph.add("A");
+        graph.set("A", "A", 5);
+        String result = graph.toString();
+        assertTrue("should represent self-loop with weight 5", result.contains("A") && result.contains("5"));
+    }
     
     /*
      * Testing Vertex...
