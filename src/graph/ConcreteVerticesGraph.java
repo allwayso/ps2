@@ -6,24 +6,57 @@ package graph;
 import java.util.*;
 
 /**
- * An implementation of Graph.
- * 
- * <p>PS2 instructions: you MUST use the provided rep.
+ * An implementation of Graph using a list of vertices.
+ * * <p>Each vertex in the graph is represented by a Vertex object, which stores 
+ * its own label and its outgoing edges to other vertices.
+ * * <p>PS2 instructions: you MUST use the provided rep (List<Vertex> vertices).
  */
 public class ConcreteVerticesGraph implements Graph<String> {
     
     private final List<Vertex> vertices = new ArrayList<>();
     
-    // Abstraction function:
-    //   TODO
+ // Abstraction function:
+    //   Represents a directed graph where:
+    //   - The set of vertices in the graph is the set of labels of the Vertex objects in 'vertices'.
+    //   - The set of directed weighted edges is the union of all outgoing edges 
+    //     defined within each Vertex object in 'vertices'.
+    
     // Representation invariant:
-    //   TODO
+    //   - vertices != null.
+    //   - Each Vertex object in the 'vertices' list must be non-null.
+    //   - Each Vertex in 'vertices' must have a unique label (no two Vertex objects 
+    //     can have the same label).
+    //   - For every edge in every Vertex, the target of that edge must be a vertex 
+    //     that also exists in the 'vertices' list (all edges stay within the graph).
+    
     // Safety from rep exposure:
-    //   TODO
+    //   - The 'vertices' list is private and final.
+    //   - 'vertices' is a List of Vertex objects. Vertex is a mutable type, so 
+    //     any method returning vertices or edges must perform defensive copying 
+    //     or return immutable views of labels/weights.
+    //   - The internal List is never returned directly to the client.
     
-    // TODO constructor
     
-    // TODO checkRep
+    /**
+     * Default constructor.
+     * Initializes an empty graph with no vertices or edges.
+     */
+    public ConcreteVerticesGraph() {
+        // Implementation: this.vertices = new ArrayList<>();
+        // checkRep();
+    }
+    
+    /**
+     * Check if the representation invariant holds.
+     * Should be called at the end of every mutator method and constructor.
+     */
+    private void checkRep() {
+        // Implementation should verify:
+        // 1. vertices is not null
+        // 2. no null elements in vertices
+        // 3. unique labels for all Vertex in list
+        // 4. all edge targets exist as labels in vertices
+    }
     
     @Override public boolean add(String vertex) {
         throw new RuntimeException("not implemented");
@@ -49,7 +82,15 @@ public class ConcreteVerticesGraph implements Graph<String> {
         throw new RuntimeException("not implemented");
     }
     
-    // TODO toString()
+    /**
+     * Returns a human-readable string representation of this graph.
+     * * @return a string that lists all vertices in the graph and their 
+     * respective outgoing edges with weights. If the graph is 
+     * empty, returns a message indicating an empty graph.
+     */
+    @Override public String toString() {
+        throw new RuntimeException("not implemented");
+    }
     
 }
 
