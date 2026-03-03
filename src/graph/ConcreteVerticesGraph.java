@@ -48,38 +48,126 @@ public class ConcreteVerticesGraph implements Graph<String> {
     
     /**
      * Check if the representation invariant holds.
-     * Should be called at the end of every mutator method and constructor.
      */
     private void checkRep() {
-        // Implementation should verify:
-        // 1. vertices is not null
-        // 2. no null elements in vertices
-        // 3. unique labels for all Vertex in list
-        // 4. all edge targets exist as labels in vertices
+        // 1. vertices list must not be null
+        assert vertices != null;
+
+        Set<String> labels = new HashSet<>();
+        
+        for (Vertex v : vertices) {
+            // 2. Each Vertex object in the list must be non-null
+            assert v != null;
+            
+            String label = v.getLabel();
+            // 3. Each Vertex must have a unique label
+            assert !labels.contains(label);
+            labels.add(label);
+        }
+
+        for (Vertex v : vertices) {
+            Map<String, Integer> targets = v.getTargets();
+            for (String targetLabel : targets.keySet()) {
+                // 4. For every edge, the target must exist in the vertices list
+                assert labels.contains(targetLabel);
+                
+                // Extra check: weights must be positive (though Vertex.checkRep usually handles this)
+                assert targets.get(targetLabel) > 0;
+            }
+        }
     }
     
     @Override public boolean add(String vertex) {
-        throw new RuntimeException("not implemented");
+     // Check if a vertex with the same label already exists
+        for (Vertex v : vertices) {
+            if (v.getLabel().equals(vertex)) {
+                return false;
+            }
+        }
+        
+        // Add new vertex and maintain RI
+        vertices.add(new Vertex(vertex));
+        
+        // Verify RI before returning
+        checkRep();
+        return true;
     }
     
-    @Override public int set(String source, String target, int weight) {
-        throw new RuntimeException("not implemented");
+    @Override 
+    public int set(String source, String target, int weight) {
+        // Ensure source and target vertices exist if weight > 0
+        if (weight > 0) {
+            this.add(source);
+            this.add(target);
+        }
+
+        int previousWeight = 0;
+        // Find the source vertex and update its target map
+        for (Vertex v : vertices) {
+            if (v.getLabel().equals(source)) {
+                previousWeight = v.setTarget(target, weight);
+                break;
+            }
+        }
+
+        checkRep();
+        return previousWeight;
     }
     
-    @Override public boolean remove(String vertex) {
-        throw new RuntimeException("not implemented");
+    @Override 
+    public boolean remove(String vertex) {
+        Vertex toRemove = null;
+        
+        // 1. Find the vertex object to remove
+        for (Vertex v : vertices) {
+            if (v.getLabel().equals(vertex)) {
+                toRemove = v;
+                break;
+            }
+        }
+
+        if (toRemove == null) {
+            return false;
+        }
+
+        // 2. Remove the vertex from the list
+        vertices.remove(toRemove);
+
+        // 3. Remove all incoming edges pointing to this vertex from other vertices
+        for (Vertex v : vertices) {
+            v.removeTarget(vertex);
+        }
+
+        checkRep();
+        return true;
     }
     
     @Override public Set<String> vertices() {
-        throw new RuntimeException("not implemented");
+        Set<String> allLabels = new HashSet<>();
+        for (Vertex v : vertices) {
+            allLabels.add(v.getLabel());
+        }
+        return allLabels; 
     }
     
     @Override public Map<String, Integer> sources(String target) {
-        throw new RuntimeException("not implemented");
+        Map<String, Integer> sourceMap = new HashMap<>();
+        for (Vertex v : vertices) {
+            Map<String, Integer> vTargets = v.getTargets();
+            if (vTargets.containsKey(target)) {
+                sourceMap.put(v.getLabel(), vTargets.get(target));
+            }
+        }
+        return sourceMap; 
     }
     
     @Override public Map<String, Integer> targets(String source) {
-        throw new RuntimeException("not implemented");
+        for (Vertex v : vertices) {
+            if (v.getLabel().equals(source)) {
+                return v.getTargets(); // Vertex.getTargets() already returns a defensive copy
+            }
+        }
+        return new HashMap<>(); // Return empty map if source vertex doesn't exist
     }
     
     /**
@@ -89,7 +177,18 @@ public class ConcreteVerticesGraph implements Graph<String> {
      * empty, returns a message indicating an empty graph.
      */
     @Override public String toString() {
-        throw new RuntimeException("not implemented");
+        if (vertices.isEmpty()) {
+            return "empty graph";
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("Graph with ").append(vertices.size()).append(" vertices:\n");
+        
+        for (Vertex v : vertices) {
+            sb.append("  ").append(v.toString()).append("\n");
+        }
+        
+        return sb.toString().trim();
     }
     
 }
