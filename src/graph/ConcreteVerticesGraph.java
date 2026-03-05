@@ -11,9 +11,9 @@ import java.util.*;
  * its own label and its outgoing edges to other vertices.
  * * <p>PS2 instructions: you MUST use the provided rep (List<Vertex> vertices).
  */
-public class ConcreteVerticesGraph implements Graph<String> {
+public class ConcreteVerticesGraph<L> implements Graph<L> {
     
-    private final List<Vertex> vertices = new ArrayList<>();
+    private final List<Vertex<L>> vertices = new ArrayList<>();
     
  // Abstraction function:
     //   Represents a directed graph where:
@@ -53,21 +53,21 @@ public class ConcreteVerticesGraph implements Graph<String> {
         // 1. vertices list must not be null
         assert vertices != null;
 
-        Set<String> labels = new HashSet<>();
+        Set<L> labels = new HashSet<>();
         
-        for (Vertex v : vertices) {
+        for (Vertex<L> v : vertices) {
             // 2. Each Vertex object in the list must be non-null
             assert v != null;
             
-            String label = v.getLabel();
+            L label = v.getLabel();
             // 3. Each Vertex must have a unique label
             assert !labels.contains(label);
             labels.add(label);
         }
 
-        for (Vertex v : vertices) {
-            Map<String, Integer> targets = v.getTargets();
-            for (String targetLabel : targets.keySet()) {
+        for (Vertex<L> v : vertices) {
+            Map<L, Integer> targets = v.getTargets();
+            for (L targetLabel : targets.keySet()) {
                 // 4. For every edge, the target must exist in the vertices list
                 assert labels.contains(targetLabel);
                 
@@ -77,16 +77,16 @@ public class ConcreteVerticesGraph implements Graph<String> {
         }
     }
     
-    @Override public boolean add(String vertex) {
+    @Override public boolean add(L vertex) {
      // Check if a vertex with the same label already exists
-        for (Vertex v : vertices) {
+        for (Vertex<L> v : vertices) {
             if (v.getLabel().equals(vertex)) {
                 return false;
             }
         }
         
         // Add new vertex and maintain RI
-        vertices.add(new Vertex(vertex));
+        vertices.add(new Vertex<L>(vertex));
         
         // Verify RI before returning
         checkRep();
@@ -94,7 +94,7 @@ public class ConcreteVerticesGraph implements Graph<String> {
     }
     
     @Override 
-    public int set(String source, String target, int weight) {
+    public int set(L source, L target, int weight) {
         // Ensure source and target vertices exist if weight > 0
         if (weight > 0) {
             this.add(source);
@@ -103,7 +103,7 @@ public class ConcreteVerticesGraph implements Graph<String> {
 
         int previousWeight = 0;
         // Find the source vertex and update its target map
-        for (Vertex v : vertices) {
+        for (Vertex<L> v : vertices) {
             if (v.getLabel().equals(source)) {
                 previousWeight = v.setTarget(target, weight);
                 break;
@@ -115,11 +115,11 @@ public class ConcreteVerticesGraph implements Graph<String> {
     }
     
     @Override 
-    public boolean remove(String vertex) {
-        Vertex toRemove = null;
+    public boolean remove(L vertex) {
+        Vertex<L> toRemove = null;
         
         // 1. Find the vertex object to remove
-        for (Vertex v : vertices) {
+        for (Vertex<L> v : vertices) {
             if (v.getLabel().equals(vertex)) {
                 toRemove = v;
                 break;
@@ -134,7 +134,7 @@ public class ConcreteVerticesGraph implements Graph<String> {
         vertices.remove(toRemove);
 
         // 3. Remove all incoming edges pointing to this vertex from other vertices
-        for (Vertex v : vertices) {
+        for (Vertex<L> v : vertices) {
             v.removeTarget(vertex);
         }
 
@@ -142,18 +142,18 @@ public class ConcreteVerticesGraph implements Graph<String> {
         return true;
     }
     
-    @Override public Set<String> vertices() {
-        Set<String> allLabels = new HashSet<>();
-        for (Vertex v : vertices) {
+    @Override public Set<L> vertices() {
+        Set<L> allLabels = new HashSet<>();
+        for (Vertex<L> v : vertices) {
             allLabels.add(v.getLabel());
         }
         return allLabels; 
     }
     
-    @Override public Map<String, Integer> sources(String target) {
-        Map<String, Integer> sourceMap = new HashMap<>();
-        for (Vertex v : vertices) {
-            Map<String, Integer> vTargets = v.getTargets();
+    @Override public Map<L, Integer> sources(L target) {
+        Map<L, Integer> sourceMap = new HashMap<>();
+        for (Vertex<L> v : vertices) {
+            Map<L, Integer> vTargets = v.getTargets();
             if (vTargets.containsKey(target)) {
                 sourceMap.put(v.getLabel(), vTargets.get(target));
             }
@@ -161,8 +161,8 @@ public class ConcreteVerticesGraph implements Graph<String> {
         return sourceMap; 
     }
     
-    @Override public Map<String, Integer> targets(String source) {
-        for (Vertex v : vertices) {
+    @Override public Map<L, Integer> targets(L source) {
+        for (Vertex<L> v : vertices) {
             if (v.getLabel().equals(source)) {
                 return v.getTargets(); // Vertex.getTargets() already returns a defensive copy
             }
@@ -171,8 +171,8 @@ public class ConcreteVerticesGraph implements Graph<String> {
     }
     
     /**
-     * Returns a human-readable string representation of this graph.
-     * * @return a string that lists all vertices in the graph and their 
+     * Returns a human-readable L representation of this graph.
+     * * @return a L that lists all vertices in the graph and their 
      * respective outgoing edges with weights. If the graph is 
      * empty, returns a message indicating an empty graph.
      */
@@ -184,7 +184,7 @@ public class ConcreteVerticesGraph implements Graph<String> {
         StringBuilder sb = new StringBuilder();
         sb.append("Graph with ").append(vertices.size()).append(" vertices:\n");
         
-        for (Vertex v : vertices) {
+        for (Vertex<L> v : vertices) {
             sb.append("  ").append(v.toString()).append("\n");
         }
         
@@ -197,12 +197,12 @@ public class ConcreteVerticesGraph implements Graph<String> {
  * A mutable object representing a vertex in a directed graph and its outgoing edges.
  * This class is internal to the representation of ConcreteVerticesGraph.
  */
-class Vertex {
+class Vertex<L> {
     
     // Internal state: the label of this vertex and a map of its outgoing edges
     // Key: target vertex label, Value: edge weight
-    private final String label;
-    private final Map<String, Integer> targets;
+    private final L label;
+    private final Map<L, Integer> targets;
 
     // Abstraction function:
     //   Represents a vertex named 'label' with directed edges to vertices in 'targets.keySet()'
@@ -215,7 +215,7 @@ class Vertex {
     //   4. All weights in targets are positive integers (> 0).
     
     // Safety from rep exposure:
-    //   1. label is private, final and an immutable String.
+    //   1. label is private, final and an immutable L.
     //   2. targets is private and final.
     //   3. Methods return defensive copies or immutable views of the targets map.
 
@@ -223,7 +223,7 @@ class Vertex {
      * Create a new vertex with a given label and no outgoing edges.
      * @param label the label for this vertex, must not be null.
      */
-    public Vertex(String label) {
+    public Vertex(L label) {
         this.label = label;
         this.targets = new HashMap<>();
         checkRep();
@@ -232,7 +232,7 @@ class Vertex {
     /**
      * @return the label of this vertex.
      */
-    public String getLabel() { 
+    public L getLabel() { 
         return label;
     }
 
@@ -241,7 +241,7 @@ class Vertex {
      * Key is target vertex label, Value is weight.
      * The returned map is a defensive copy.
      */
-    public Map<String, Integer> getTargets() { 
+    public Map<L, Integer> getTargets() { 
         return new HashMap<>(targets);
     }
 
@@ -251,7 +251,7 @@ class Vertex {
      * @param weight non-negative weight. If 0, removes the edge.
      * @return the previous weight of the edge, or 0 if no such edge existed.
      */
-    public int setTarget(String target, int weight) { 
+    public int setTarget(L target, int weight) { 
         int previousWeight = targets.getOrDefault(target, 0);
         
         if (weight == 0) {
@@ -269,7 +269,7 @@ class Vertex {
      * @param target the label of the target vertex to be removed.
      * @return true if an edge was removed, false otherwise.
      */
-    public boolean removeTarget(String target) {
+    public boolean removeTarget(L target) {
         if (targets.containsKey(target)) {
             targets.remove(target);
             checkRep();
@@ -279,7 +279,7 @@ class Vertex {
     }
 
     /**
-     * @return a human-readable string representation of this vertex and its outgoing edges.
+     * @return a human-readable L representation of this vertex and its outgoing edges.
      */
     @Override public String toString() { 
         StringBuilder sb = new StringBuilder();
@@ -298,7 +298,7 @@ class Vertex {
     private void checkRep() { 
         assert label != null;
         assert targets != null;
-        for (String targetLabel : targets.keySet()) {
+        for (L targetLabel : targets.keySet()) {
             assert targetLabel != null;
             assert targets.get(targetLabel) != null;
             assert targets.get(targetLabel) > 0;
