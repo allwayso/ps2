@@ -21,7 +21,7 @@ public class ConcreteEdgesGraphTest extends GraphInstanceTest {
      * Provide a ConcreteEdgesGraph for tests in GraphInstanceTest.
      */
     @Override public Graph<String> emptyInstance() {
-        return new ConcreteEdgesGraph();
+        return new ConcreteEdgesGraph<>();
     }
     
     /*
@@ -37,7 +37,7 @@ public class ConcreteEdgesGraphTest extends GraphInstanceTest {
     //all empty
     @Test
     public void testToStringEmptyGraph() {
-        Graph graph=emptyInstance();
+        Graph<String> graph=emptyInstance();
         assertEquals("empty graph",graph.toString());
     }
     
@@ -94,12 +94,12 @@ public class ConcreteEdgesGraphTest extends GraphInstanceTest {
     
     @Test(expected = IllegalArgumentException.class)
     public void testEdgeNullVertex() {
-        new Edge(null, "B", 10);
+        new Edge<String>(null, "B", 10);
     }
     
     @Test
     public void testEdgeObservers() {
-        Edge edge = new Edge("A", "B", 10);
+        Edge<String> edge = new Edge<>("A", "B", 10);
         assertEquals("expected source", "A", edge.getSource());
         assertEquals("expected target", "B", edge.getTarget());
         assertEquals("expected weight", 10, edge.getWeight());
@@ -107,17 +107,17 @@ public class ConcreteEdgesGraphTest extends GraphInstanceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testEdge0Weight() {
-        new Edge("A", "B", 0);
+        new Edge<>("A", "B", 0);
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void testEdgeNegativeWeight() {
-        new Edge("A", "B", -5);
+        new Edge<>("A", "B", -5);
     }
     
     @Test
     public void testEdgeToString() {
-        Edge edge = new Edge("A", "B", 5);
+        Edge<String> edge = new Edge<>("A", "B", 5);
         String result = edge.toString();
         assertTrue("toString should contain A", result.contains("A"));
         assertTrue("toString should contain B", result.contains("B"));
@@ -126,9 +126,9 @@ public class ConcreteEdgesGraphTest extends GraphInstanceTest {
 
     @Test
     public void testEdgeEquality() {
-        Edge e1 = new Edge("A", "B", 10);
-        Edge e2 = new Edge("A", "B", 20); // Weight differs but same vertices
-        Edge e3 = new Edge("B", "A", 10); // Swapped vertices
+        Edge<String> e1 = new Edge<>("A", "B", 10);
+        Edge<String> e2 = new Edge<>("A", "B", 20); // Weight differs but same vertices
+        Edge<String> e3 = new Edge<>("B", "A", 10); // Swapped vertices
         
         assertEquals("Edges with same source/target should be equal", e1, e2);
         assertEquals("HashCodes should be equal for equal edges", e1.hashCode(), e2.hashCode());

@@ -14,7 +14,7 @@ import java.util.*;
  * of the number of vertices.
  */
 
-public class ConcreteEdgesGraph<L extends Comparable<? super L>> implements Graph<L> {
+public class ConcreteEdgesGraph<L> implements Graph<L> {
     
     private final Set<L> vertices = new HashSet<>();
     private final List<Edge<L>> edges = new ArrayList<>();
@@ -137,7 +137,7 @@ public class ConcreteEdgesGraph<L extends Comparable<? super L>> implements Grap
         // Use an Iterator to safely remove elements while iterating
         Iterator<Edge<L>> it = edges.iterator();
         while (it.hasNext()) {
-            Edge e = it.next();
+            Edge<L> e = it.next();
             if (e.getSource().equals(vertex) || e.getTarget().equals(vertex)) {
                 it.remove();
             }
@@ -205,7 +205,6 @@ public class ConcreteEdgesGraph<L extends Comparable<? super L>> implements Grap
         
         // Sort vertices to ensure a deterministic L output for testing
         List<L> sortedVertices = new ArrayList<>(vertices);
-        Collections.sort(sortedVertices);
         
         for (L v : sortedVertices) {
             sb.append(v).append(" -> ");
@@ -321,8 +320,8 @@ class Edge<L> {
     //equals
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Edge)) return false;
-        Edge<L> other = (Edge<L>) obj;
+        if (!(obj instanceof Edge<?>)) return false;
+        Edge<?> other = (Edge<?>) obj;
         return this.source.equals(other.source) && 
                this.target.equals(other.target);
     }

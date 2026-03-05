@@ -22,7 +22,7 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
      * Provide a ConcreteVerticesGraph for tests in GraphInstanceTest.
      */
     @Override public Graph<String> emptyInstance() {
-        return new ConcreteVerticesGraph();
+        return new ConcreteVerticesGraph<>();
     }
     
     /*
@@ -88,7 +88,7 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
      */
     @Test
     public void testConstructorAndGetLabel() {
-        Vertex v = new Vertex("Vertex 1-A");
+        Vertex<String> v = new Vertex<>("Vertex 1-A");
         assertEquals("expected label to match constructor argument", "Vertex 1-A", v.getLabel());
     }
     
@@ -108,7 +108,7 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
     // Partition: target does not exist, weight > 0 (Add)
     @Test
     public void testSetTargetAddNewEdge() {
-        Vertex v = new Vertex("A");
+        Vertex<String> v = new Vertex<>("A");
         int result = v.setTarget("B", 10);
         assertEquals("expected 0 for newly created edge", 0, result);
         assertTrue("v should contain target B", v.getTargets().containsKey("B"));
@@ -118,7 +118,7 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
     // Partition: target exists, weight > 0 (Update)
     @Test
     public void testSetTargetUpdateExistingEdge() {
-        Vertex v = new Vertex("A");
+        Vertex<String> v = new Vertex<>("A");
         v.setTarget("B", 10);
         int result = v.setTarget("B", 25);
         assertEquals("expected previous weight 10", 10, result);
@@ -128,7 +128,7 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
     // Partition: target exists, weight = 0 (Remove)
     @Test
     public void testSetTargetRemoveExistingEdge() {
-        Vertex v = new Vertex("A");
+        Vertex<String> v = new Vertex<>("A");
         v.setTarget("B", 10);
         int result = v.setTarget("B", 0);
         assertEquals("expected previous weight 10", 10, result);
@@ -138,7 +138,7 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
     // Partition: target does not exist, weight = 0 (No-op)
     @Test
     public void testSetTargetRemoveNonExistentEdge() {
-        Vertex v = new Vertex("A");
+        Vertex<String> v = new Vertex<>("A");
         int result = v.setTarget("B", 0);
         assertEquals("expected 0 for non-existent edge", 0, result);
         assertFalse("targets should still be empty", v.getTargets().containsKey("B"));
@@ -154,7 +154,7 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
     // Partition: target exists
     @Test
     public void testRemoveTargetExists() {
-        Vertex v = new Vertex("A");
+        Vertex<String> v = new Vertex<>("A");
         v.setTarget("B", 5);
         boolean removed = v.removeTarget("B");
         assertTrue("expected true when removing existing edge", removed);
@@ -164,7 +164,7 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
     // Partition: target does not exist
     @Test
     public void testRemoveTargetDoesNotExist() {
-        Vertex v = new Vertex("A");
+        Vertex<String> v = new Vertex<>("A");
         v.setTarget("B", 5);
         boolean removed = v.removeTarget("C");
         assertFalse("expected false when removing non-existent edge", removed);
@@ -183,14 +183,14 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
     // Partition: 0 targets
     @Test
     public void testGetTargetsEmpty() {
-        Vertex v = new Vertex("A");
+        Vertex<String> v = new Vertex<>("A");
         assertTrue("expected empty map", v.getTargets().isEmpty());
     }
 
     // Partition: > 1 targets
     @Test
     public void testGetTargetsMultiple() {
-        Vertex v = new Vertex("A");
+        Vertex<String> v = new Vertex<>("A");
         v.setTarget("B", 10);
         v.setTarget("C", 20);
         Map<String, Integer> targets = v.getTargets();
@@ -202,7 +202,7 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
     // Partition: defensive copy
     @Test
     public void testGetTargetsDefensiveCopy() {
-        Vertex v = new Vertex("A");
+        Vertex<String> v = new Vertex<>("A");
         v.setTarget("B", 10);
         Map<String, Integer> targets = v.getTargets();
         
@@ -217,7 +217,7 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
     // Partition: changes to vertex do not affect previously returned maps
     @Test
     public void testGetTargetsSnapshotIsolation() {
-        Vertex v = new Vertex("A");
+        Vertex<String> v = new Vertex<>("A");
         Map<String, Integer> oldTargets = v.getTargets();
         v.setTarget("B", 10);
         assertFalse("old map should not reflect new edge", oldTargets.containsKey("B"));
@@ -234,7 +234,7 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
     // Partition: 0 targets
     @Test
     public void testToStringNoEdges() {
-        Vertex v = new Vertex("A");
+        Vertex<String> v = new Vertex<>("A");
         String s = v.toString();
         assertTrue("should contain label A", s.contains("A"));
     }
@@ -242,7 +242,7 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
     // Partition: > 1 targets
     @Test
     public void testToStringMultipleEdges() {
-        Vertex v = new Vertex("A");
+        Vertex<String> v = new Vertex<>("A");
         v.setTarget("B", 10);
         v.setTarget("C", 20);
         String s = v.toString();
