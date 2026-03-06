@@ -70,10 +70,9 @@ public class GraphPoet {
      */
     
     /* Safety from rep exposure:
-     * 1.graph is a final variant
-     * 2.operations in graph do not leak
-     * 3.constructor parameter corpus is loaded as graph in memory,so changes in file won't change graph
-     * 4.the return in poem() method is an immutable datatype
+     * 1.field safety:graph is a final variant and operations in graph do not leak
+     * 3.input safety:constructor parameter corpus is loaded as graph in memory,so changes in file won't change graph
+     * 4.output safety:the return in poem() method is an immutable datatype
      */
     
     
@@ -99,6 +98,20 @@ public class GraphPoet {
         throw new RuntimeException("not implemented");
     }
     
-    // TODO toString()
+    /**
+     * Generate a human readable String type text to showcase the graph
+     * 
+     * @return text explanation of graph
+     */
+    @Override public String toString() {}
+    
+    
+    /**
+     * Create a new graph poet using the specified corpus string.
+     * * @param corpus string of text to derive the word affinity graph from
+     */
+    public GraphPoet(String corpus) {
+        
+    }
     
 }
