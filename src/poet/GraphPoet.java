@@ -110,8 +110,9 @@ public class GraphPoet {
     public GraphPoet(String corpus) {
         // 1. Split the corpus into words based on any whitespace
         // Using trim() to avoid empty strings at the beginning/end
-        String[] words = corpus.trim().split("\\s+");
-
+        String cleanCorpus = corpus.replaceAll("[\\p{Punct}]", " ");
+        String[] words = cleanCorpus.trim().split("\\s+");
+        
         // 2. Iterate through the words to build the graph
         // We need at least two words to form an edge
         for (int i = 0; i < words.length - 1; i++) {

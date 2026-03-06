@@ -20,9 +20,15 @@ public class Main {
      * @throws IOException if a poet corpus file cannot be found or read
      */
     public static void main(String[] args) throws IOException {
-        final GraphPoet nimoy = new GraphPoet(new File("src/poet/mugar-omni-theater.txt"));
-        final String input = "Test the system.";
-        System.out.println(input + "\n>>>\n" + nimoy.poem(input));
+        final GraphPoet shakespeare = new GraphPoet(new File("src/poet/shakespeare.txt"));
+        String input = "to thou art";
+        System.out.println("original vertion: "+input);
+        for(int i=1;i<=3;i++) {
+            String output=shakespeare.poem(input);
+            System.out.println("number "+i+" version: "+output);
+            input=output;
+        }
+        //System.out.println(shakespeare.toString());
     }
     
 }
