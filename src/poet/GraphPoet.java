@@ -54,12 +54,28 @@ public class GraphPoet {
     
     private final Graph<String> graph = Graph.empty();
     
-    // Abstraction function:
-    //   TODO
-    // Representation invariant:
-    //   TODO
-    // Safety from rep exposure:
-    //   TODO
+    /* Abstraction function:
+     * Graph<String> graph defines a word affinity graph,where:
+     *  -each vertex represents a unique,non-empty and case-insensetive word
+     *  -the edge represents the times that a word followed by another
+     * 
+     */
+    
+    
+    /* Representation invariant:
+     * 1.the graph should not be null
+     * 2.the weight of edge must be 0 or positive (as required by graph)
+     * 3.the vertex(word) should be correctly delimited
+     * 4.different cases should be treated equally
+     */
+    
+    /* Safety from rep exposure:
+     * 1.graph is a final variant
+     * 2.operations in graph do not leak
+     * 3.constructor parameter corpus is loaded as graph in memory,so changes in file won't change graph
+     * 4.the return in poem() method is an immutable datatype
+     */
+    
     
     /**
      * Create a new poet with the graph from corpus (as described above).
