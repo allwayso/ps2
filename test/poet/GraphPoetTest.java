@@ -50,7 +50,7 @@ public class GraphPoetTest {
     @Test
     public void testNoBridgePathExists() {
         // w1 and w2 exist in graph, but no w1 -> b -> w2 exists
-        GraphPoet poet = new GraphPoet("apple banana cherry date");
+        GraphPoet poet = new GraphPoet("apple dislikes banana or cherry ");
         // "apple" and "cherry" are in the graph, but no word bridges them
         assertEquals("no bridge should be inserted if no 2-edge path exists",
                      "apple cherry", poet.poem("apple cherry"));
